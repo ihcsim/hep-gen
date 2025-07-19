@@ -15,17 +15,60 @@
 package main
 
 import (
+	"context"
 	"dagger/hep-writer/internal/dagger"
+	"fmt"
+	"path/filepath"
 )
 
 type HepWriter struct{}
 
+const (
+	docsSite               = "https://docs.harvesterhci.io/v1.5/"
+	workDir                = "work"
+	problemDescriptionFile = "problem.txt"
+	templateFile           = "template.md"
+)
+
 func (m *HepWriter) Hep(
+	ctx context.Context,
 	// the KEP title
 	title string,
 	// the source directory to be mounted into the workspace
 	// +default="./"
 	source *dagger.Directory,
 ) (string, error) {
-	return "", nil
+	prompt := fmt.Sprintf(`Harvester is a modern, open, interoperable, hyperconverged infrastructure (HCI) solution built on Kubernetes. It is an open source project maintained by SUSE.
+	Harvester depends on KubeVirt to provide the API to run virtual machines in Kubernetes. Longhorn serves as its main storage provider using the Container Storage Interface (CSI) API.
+	More information on Harvester can be found at %s.
+
+	You are a software engineer tasked with the responsbility to write a new Harvester Enhancement Proposal (aka HEP).
+
+	A HEP is a proposal documentation that describes new technical enhancement to address specific user problems. It is expressed in the markdown language.
+
+	The title of your HEP is going to be "%s". The problem description can be found in the %s file in your workspace.
+
+	The enhancement can either propose new features or changes to improve existing features.
+	The readers of this HEP are software engineers familiar with technologies like Kubernetes, Golang, Python, YAML etc.
+	Please use appropriate formatting such as headers, tables, bullet points and embedded .PNG images to improve readability.
+	Including Golang and YAML code samples to illustrate certain changes is encouraged, but not necessary.
+	Make sure that the generated HEP contains only valid markdown syntax.
+
+	You can find the template of the HEP at %s. Make a copy of the template file to store the draft content. Name the file after the HEP title, using kebab style.
+
+	You have access to a workspace. The workspace contains the problem description and template files.
+`, docsSite, title, filepath.Join(workDir, problemDescriptionFile), filepath.Join(workDir, templateFile))
+
+	ws := dag.HepWorkspace(source)
+	env := dag.Env().
+		WithHepWorkspaceInput("workspace", ws, "the workspace for this task").
+		WithHepWorkspaceOutput("workspace", "the workspace with the generated HEP draft")
+	return dag.LLM().
+		WithEnv(env).
+		WithPrompt(prompt).
+		Env().
+		Output("workspace").
+		AsHepWorkspace().
+		Container().
+		Stdout(ctx)
 }
