@@ -1,3 +1,6 @@
+default: all
+all: test hep-workspace hep-writer
+
 .PHONY: hep-writer
 hep-writer:
 	dagger develop
@@ -11,4 +14,11 @@ hep-workspace:
 test:
 	go test ./...
 
-all: test hep-workspace hep-writer
+hep:
+	dagger -c /bin/sh -c 'hep'
+
+preview:
+	dagger -c /bin/sh -c 'preview|up'
+
+sandbox:
+	dagger -c /bin/sh -c 'sandbox|up'

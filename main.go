@@ -30,6 +30,7 @@ const (
 	fileHEP                = "index.md"
 	fileProblemDescription = "problem.txt"
 	workDir                = "work"
+	exposePort             = 3000
 )
 
 var (
@@ -37,12 +38,51 @@ var (
 	filepathProblemDescription = filepath.Join(workDir, fileProblemDescription)
 )
 
-// Hep generates a HEP draft with the given title. A sandbox workspace is created with a bind mount to the
-// host 'source' directory. The workspace contains the following files:
-// * problem.txt - the HEP problem statement
-// * index.md - the final draft of the HEP
+// Hep generates a HEP draft with the given title. The generated content is output to stdout.
+//
+// The task is performed in a containerized sandbox workspace.
+// The workspace has a bind mount to the host 'source' directory with the following files:
+// * problem.txt - the HEP problem statement filled by the HEP author
+// * template.md - the HEP template downloaded from tmplDownloadURL
+// * index.md - the final draft of the HEP following the sections outlined in template.md
 func (m *HepWriter) Hep(
 	ctx context.Context,
+	// the KEP title
+	title string,
+	// the source directory to mount into the workspace
+	// +defaultPath="./work"
+	source *dagger.Directory,
+) (string, error) {
+	w, err := m.workspace(title, source)
+	if err != nil {
+		return "", err
+	}
+	return w.Stdout(ctx)
+}
+
+// Preview publishes the generated HEP draft to localhost:3000.
+// To port-forward to the container, use `dagger -c /bin/sh -c 'preview|up'`
+// The markdown server is managed by 'madness' (https://madness.dannyb.co).
+func (m *HepWriter) Preview(
+	ctx context.Context,
+	// the KEP title
+	title string,
+	// the source directory to mount into the workspace
+	// +defaultPath="./work"
+	source *dagger.Directory,
+) (*dagger.Service, error) {
+	w, err := m.workspace(title, source)
+	if err != nil {
+		return nil, err
+	}
+
+	serviceOpts := dagger.ContainerAsServiceOpts{
+		Args: []string{"madness", "server"},
+	}
+	return w.AsService(serviceOpts), nil
+}
+
+func (m *HepWriter) workspace(
 	// the KEP title
 	title string,
 	// the source directory to mount into the workspace
@@ -68,7 +108,9 @@ func (m *HepWriter) Hep(
 	ws := dag.HepWorkspace(
 		source,
 		tmplDownloadURL,
-		filepathHEP)
+		filepathHEP,
+		exposePort,
+	)
 	env := dag.Env().
 		WithHepWorkspaceInput("workspace", ws, "the workspace for this task").
 		WithHepWorkspaceOutput("workspace", "the workspace with the generated HEP draft")
@@ -81,10 +123,10 @@ func (m *HepWriter) Hep(
 		Container(), nil
 }
 
-// Workspace returns a sandbox container representing the workspace with a bind mount to the host 'source' directory.
+// Sandbox returns a sandbox container representing the workspace with a bind mount to the host 'source' directory.
 // The sandbox container is exposed at port 3000.
-// To start the service at localhost:3000, run `dagger -c /bin/sh -c 'workspace | up'`.
-func (m *HepWriter) Workspace(
+// To port-forward to the container, use `dagger -c /bin/sh -c 'sandbox|up'`
+func (m *HepWriter) Sandbox(
 	ctx context.Context,
 	// the source directory to mount into the workspace
 	// +defaultPath="./work"
@@ -97,6 +139,7 @@ func (m *HepWriter) Workspace(
 		source,
 		tmplDownloadURL,
 		fileHEP,
+		exposePort,
 	).Container().
 		AsService(serviceOpts)
 }

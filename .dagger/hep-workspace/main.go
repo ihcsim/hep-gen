@@ -20,7 +20,6 @@ import (
 
 const (
 	defaultImage   = "dannyben/madness:1.2.3"
-	defaultPort    = 3000
 	defaultWorkdir = "/docs"
 	defaultPath    = "/docs"
 )
@@ -35,6 +34,7 @@ func New(
 	source *dagger.Directory,
 	tmplDownloadURL string,
 	outputFile string,
+	exposePort int,
 ) HepWorkspace {
 	tmpl := dag.HTTP(tmplDownloadURL)
 	return HepWorkspace{
@@ -43,6 +43,6 @@ func New(
 			WithMountedDirectory(defaultPath, source).
 			WithFile(outputFile, tmpl).
 			WithWorkdir(defaultWorkdir).
-			WithExposedPort(defaultPort),
+			WithExposedPort(exposePort),
 	}
 }
