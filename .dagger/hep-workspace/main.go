@@ -43,7 +43,6 @@ func New(
 			WithMountedDirectory(defaultPath, source).
 			WithFile(outputFile, tmpl).
 			WithWorkdir(defaultWorkdir).
-			WithExposedPort(defaultPort).
-			WithDefaultTerminalCmd([]string{"/bin/bash"}),
+			WithExposedPort(defaultPort),
 	}
 }

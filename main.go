@@ -83,14 +83,20 @@ func (m *HepWriter) Hep(
 
 // Workspace returns a sandbox container representing the workspace with a bind mount to the host 'source' directory.
 // The sandbox container is exposed at port 3000.
+// To start the service at localhost:3000, run `dagger -c /bin/sh -c 'workspace | up'`.
 func (m *HepWriter) Workspace(
+	ctx context.Context,
 	// the source directory to mount into the workspace
 	// +defaultPath="./work"
 	source *dagger.Directory,
-) *dagger.Container {
+) *dagger.Service {
+	serviceOpts := dagger.ContainerAsServiceOpts{
+		Args: []string{"madness", "server"},
+	}
 	return dag.HepWorkspace(
 		source,
 		tmplDownloadURL,
 		fileHEP,
-	).Container()
+	).Container().
+		AsService(serviceOpts)
 }
