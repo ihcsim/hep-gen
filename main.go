@@ -72,3 +72,12 @@ func (m *HepWriter) Hep(
 		Container().
 		Stdout(ctx)
 }
+
+// returns a workspace container with a bind mount to 'source'.
+func (m *HepWriter) Workspace(
+	// the source directory to mount into the workspace
+	// +defaultPath="./work"
+	source *dagger.Directory,
+) *dagger.Container {
+	return dag.HepWorkspace(source).Container()
+}
