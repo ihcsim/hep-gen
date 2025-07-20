@@ -1,8 +1,8 @@
 default: all
-all: test hep-workspace hep-writer
+all: test hep-workspace hepgen
 
-.PHONY: hep-writer
-hep-writer:
+.PHONY: hepgen
+hepgen:
 	dagger develop
 	go build
 

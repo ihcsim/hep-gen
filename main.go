@@ -1,4 +1,4 @@
-// A generated module for HepWriter functions
+// A generated module for HepGen functions
 //
 // This module has been generated via dagger init and serves as a reference to
 // basic module structure as you get started with Dagger.
@@ -16,13 +16,13 @@ package main
 
 import (
 	"context"
-	"dagger/hep-writer/internal/dagger"
-	"dagger/hep-writer/pkg/prompt"
+	"dagger/hepgen/internal/dagger"
+	"dagger/hepgen/pkg/prompt"
 	"io"
 	"path/filepath"
 )
 
-type HepWriter struct{}
+type HepGen struct{}
 
 const (
 	docsSite               = "https://docs.harvesterhci.io/v1.5/"
@@ -45,7 +45,7 @@ var (
 // * problem.txt - the HEP problem statement filled by the HEP author
 // * template.md - the HEP template downloaded from tmplDownloadURL
 // * index.md - the final draft of the HEP following the sections outlined in template.md
-func (m *HepWriter) Hep(
+func (m *HepGen) Hep(
 	ctx context.Context,
 	// the KEP title
 	title string,
@@ -63,7 +63,7 @@ func (m *HepWriter) Hep(
 // Preview publishes the generated HEP draft to localhost:3000.
 // To port-forward to the container, use `dagger -c /bin/sh -c 'preview|up'`
 // The markdown server is managed by 'madness' (https://madness.dannyb.co).
-func (m *HepWriter) Preview(
+func (m *HepGen) Preview(
 	ctx context.Context,
 	// the KEP title
 	title string,
@@ -82,7 +82,7 @@ func (m *HepWriter) Preview(
 	return w.AsService(serviceOpts), nil
 }
 
-func (m *HepWriter) workspace(
+func (m *HepGen) workspace(
 	// the KEP title
 	title string,
 	// the source directory to mount into the workspace
@@ -126,7 +126,7 @@ func (m *HepWriter) workspace(
 // Sandbox returns a sandbox container representing the workspace with a bind mount to the host 'source' directory.
 // The sandbox container is exposed at port 3000.
 // To port-forward to the container, use `dagger -c /bin/sh -c 'sandbox|up'`
-func (m *HepWriter) Sandbox(
+func (m *HepGen) Sandbox(
 	ctx context.Context,
 	// the source directory to mount into the workspace
 	// +defaultPath="./work"

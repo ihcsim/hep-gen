@@ -1,5 +1,5 @@
 {
-  "name": "hep-writer",
+  "name": "hep-gen",
   "engineVersion": "v0.18.12",
   "sdk": {
     "source": "go"
