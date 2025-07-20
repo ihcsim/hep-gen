@@ -125,21 +125,21 @@ func (m *HepGen) workspace(
 
 // Sandbox returns a sandbox container representing the workspace with a bind mount to the host 'source' directory.
 // The sandbox container is exposed at port 3000.
-// To port-forward to the container, use `dagger -c /bin/sh -c 'sandbox|up'`
+// To start an interactive session, use `dagger -c /bin/sh -c 'sandbox|terminal'`
+// To port-forward to the container, use `dagger -c /bin/sh -c 'sandbox|as-service|up'`
 func (m *HepGen) Sandbox(
 	ctx context.Context,
 	// the source directory to mount into the workspace
 	// +defaultPath="./work"
 	source *dagger.Directory,
-) *dagger.Service {
-	serviceOpts := dagger.ContainerAsServiceOpts{
-		Args: []string{"madness", "server"},
-	}
+) *dagger.Container {
+	args := []string{"madness", "server"}
 	return dag.HepWorkspace(
 		source,
 		tmplDownloadURL,
 		fileHEP,
 		exposePort,
-	).Container().
-		AsService(serviceOpts)
+	).
+		Container().
+		WithDefaultArgs(args)
 }

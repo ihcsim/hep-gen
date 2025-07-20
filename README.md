@@ -49,13 +49,15 @@ dagger -c '.help hep'
 
 ## Usages
 
-To launch an interactive sandbox:
+To start an interactive session in the sandbox with a bind mount to the project's
+`./work` folder:
 
 ```sh
 dagger -c /bin/sh -c 'sandbox|terminal'
 ```
 
-To preview the markdown in the sandbox at <http://localhost:3000>:
+To preview the markdown in the project's `./work` folder author
+<http://localhost:3000>:
 
 ```sh
 dagger -c /bin/sh -c 'sandbox|as-service|up'
@@ -81,4 +83,4 @@ make hep-workspace
 
 Apache License Version 2.0.
 
-See [LICENSE](#license) file.
+See [LICENSE](LICENSE) file.
