@@ -30,14 +30,18 @@ const (
 	templateFile           = "template.md"
 )
 
+// Hep generates a HEP draft with the given title. A sandbox workspace is created with a bind mount to the
+// host 'source' directory. The workspace contains the following files:
+// * problem.txt - the HEP problem statement
+// * index.md - the final draft of the HEP
 func (m *HepWriter) Hep(
 	ctx context.Context,
 	// the KEP title
 	title string,
-	// the source directory to be mounted into the workspace
-	// +default="./"
+	// the source directory to mount into the workspace
+	// +defaultPath="./work"
 	source *dagger.Directory,
-) (string, error) {
+) *dagger.Container {
 	prompt := fmt.Sprintf(`Harvester is a modern, open, interoperable, hyperconverged infrastructure (HCI) solution built on Kubernetes. It is an open source project maintained by SUSE.
 	Harvester depends on KubeVirt to provide the API to run virtual machines in Kubernetes. Longhorn serves as its main storage provider using the Container Storage Interface (CSI) API.
 	More information on Harvester can be found at %s.
@@ -69,11 +73,11 @@ func (m *HepWriter) Hep(
 		Env().
 		Output("workspace").
 		AsHepWorkspace().
-		Container().
-		Stdout(ctx)
+		Container()
 }
 
-// returns a workspace container with a bind mount to 'source'.
+// Workspace returns a sandbox container representing the workspace with a bind mount to the host 'source' directory.
+// The sandbox container is exposed at port 3000.
 func (m *HepWriter) Workspace(
 	// the source directory to mount into the workspace
 	// +defaultPath="./work"
