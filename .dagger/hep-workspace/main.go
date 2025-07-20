@@ -33,11 +33,15 @@ type HepWorkspace struct {
 
 func New(
 	source *dagger.Directory,
+	tmplDownloadURL string,
+	outputFile string,
 ) HepWorkspace {
+	tmpl := dag.HTTP(tmplDownloadURL)
 	return HepWorkspace{
 		Container: dag.Container().
 			From(defaultImage).
 			WithMountedDirectory(defaultPath, source).
+			WithFile(outputFile, tmpl).
 			WithWorkdir(defaultWorkdir).
 			WithExposedPort(defaultPort).
 			WithDefaultTerminalCmd([]string{"/bin/bash"}),

@@ -26,10 +26,15 @@ type HepWriter struct{}
 
 const (
 	docsSite               = "https://docs.harvesterhci.io/v1.5/"
+	tmplDownloadURL        = "https://raw.githubusercontent.com/harvester/harvester/refs/heads/master/enhancements/YYYYMMDD-template.md"
 	fileHEP                = "index.md"
 	fileProblemDescription = "problem.txt"
-	urlHEPTemplate         = "template.md"
 	workDir                = "work"
+)
+
+var (
+	filepathHEP                = filepath.Join(workDir, fileHEP)
+	filepathProblemDescription = filepath.Join(workDir, fileProblemDescription)
 )
 
 // Hep generates a HEP draft with the given title. A sandbox workspace is created with a bind mount to the
@@ -44,16 +49,12 @@ func (m *HepWriter) Hep(
 	// +defaultPath="./work"
 	source *dagger.Directory,
 ) (*dagger.Container, error) {
-	var (
-		filepathHEP                = filepath.Join(workDir, fileHEP)
-		filepathProblemDescription = filepath.Join(workDir, fileProblemDescription)
-		promptInputs               = &prompt.PromptInputs{
-			Title:                      title,
-			DocsSite:                   docsSite,
-			FilepathHEP:                filepathHEP,
-			FilepathProblemDescription: filepathProblemDescription,
-		}
-	)
+	promptInputs := &prompt.PromptInputs{
+		Title:                      title,
+		DocsSite:                   docsSite,
+		FilepathHEP:                filepathHEP,
+		FilepathProblemDescription: filepathProblemDescription,
+	}
 
 	out, err := prompt.ExecTmpl(promptInputs)
 	if err != nil {
@@ -64,7 +65,10 @@ func (m *HepWriter) Hep(
 		return nil, err
 	}
 
-	ws := dag.HepWorkspace(source)
+	ws := dag.HepWorkspace(
+		source,
+		tmplDownloadURL,
+		filepathHEP)
 	env := dag.Env().
 		WithHepWorkspaceInput("workspace", ws, "the workspace for this task").
 		WithHepWorkspaceOutput("workspace", "the workspace with the generated HEP draft")
@@ -84,5 +88,9 @@ func (m *HepWriter) Workspace(
 	// +defaultPath="./work"
 	source *dagger.Directory,
 ) *dagger.Container {
-	return dag.HepWorkspace(source).Container()
+	return dag.HepWorkspace(
+		source,
+		tmplDownloadURL,
+		fileHEP,
+	).Container()
 }
