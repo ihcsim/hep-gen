@@ -16,8 +16,8 @@ package main
 
 import (
 	"context"
-	"dagger/hepgen/internal/dagger"
-	"dagger/hepgen/pkg/prompt"
+	"dagger/hep-gen/internal/dagger"
+	"dagger/hep-gen/pkg/prompt"
 	"io"
 	"path/filepath"
 )

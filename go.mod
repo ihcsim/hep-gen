@@ -1,4 +1,4 @@
-module dagger/hepgen
+module dagger/hep-gen
 
 go 1.24.4
 
