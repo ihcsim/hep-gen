@@ -25,21 +25,23 @@ import (
 type HepGen struct{}
 
 const (
-	docsSite               = "https://docs.harvesterhci.io/v1.5/"
-	tmplDownloadURL        = "https://raw.githubusercontent.com/harvester/harvester/refs/heads/master/enhancements/YYYYMMDD-template.md"
-	fileHEP                = "index.md"
-	fileProblemDescription = "problem.txt"
-	workDir                = "work"
-	exposePort             = 3000
+	docSiteHarvester = "https://docs.harvesterhci.io/v1.5/"
+	docSiteKubeVirt  = "https://kubevirt.io/user-guide/"
+	docSiteLonghorn  = "https://longhorn.io/docs/1.9.0/"
+	docSiteMadness   = "https://madness.dannyb.co/"
+	tmplDownloadURL  = "https://raw.githubusercontent.com/harvester/harvester/refs/heads/master/enhancements/YYYYMMDD-template.md"
+	fileHEP          = "index.md"
+	fileSummary      = "summary.md"
+	workDir          = "work"
+	exposePort       = 3000
 )
 
 var (
-	filepathHEP                = filepath.Join(workDir, fileHEP)
-	filepathProblemDescription = filepath.Join(workDir, fileProblemDescription)
+	filepathHEP     = filepath.Join(workDir, fileHEP)
+	filepathSummary = filepath.Join(workDir, fileSummary)
 )
 
-// Hep generates a HEP draft with the given title. The generated content is output to stdout.
-//
+// Hep generates a HEP draft with the given title.
 // The task is performed in a containerized sandbox workspace.
 // The workspace has a bind mount to the host 'source' directory with the following files:
 // * problem.txt - the HEP problem statement filled by the HEP author
@@ -52,48 +54,15 @@ func (m *HepGen) Hep(
 	// the source directory to mount into the workspace
 	// +defaultPath="./work"
 	source *dagger.Directory,
-) (string, error) {
-	w, err := m.workspace(title, source)
-	if err != nil {
-		return "", err
-	}
-	return w.Stdout(ctx)
-}
-
-// Preview publishes the generated HEP draft to localhost:3000.
-// To port-forward to the container, use `dagger -c /bin/sh -c 'preview|up'`
-// The markdown server is managed by 'madness' (https://madness.dannyb.co).
-func (m *HepGen) Preview(
-	ctx context.Context,
-	// the KEP title
-	title string,
-	// the source directory to mount into the workspace
-	// +defaultPath="./work"
-	source *dagger.Directory,
-) (*dagger.Service, error) {
-	w, err := m.workspace(title, source)
-	if err != nil {
-		return nil, err
-	}
-
-	serviceOpts := dagger.ContainerAsServiceOpts{
-		Args: []string{"madness", "server"},
-	}
-	return w.AsService(serviceOpts), nil
-}
-
-func (m *HepGen) workspace(
-	// the KEP title
-	title string,
-	// the source directory to mount into the workspace
-	// +defaultPath="./work"
-	source *dagger.Directory,
 ) (*dagger.Container, error) {
 	promptInputs := &prompt.PromptInputs{
-		Title:                      title,
-		DocsSite:                   docsSite,
-		FilepathHEP:                filepathHEP,
-		FilepathProblemDescription: filepathProblemDescription,
+		HEPTitle:         title,
+		DocSiteHarvester: docSiteHarvester,
+		DocSiteKubeVirt:  docSiteKubeVirt,
+		DocSiteLonghorn:  docSiteLonghorn,
+		DocSiteMadness:   docSiteMadness,
+		FilepathHEP:      filepathHEP,
+		FilepathSummary:  filepathSummary,
 	}
 
 	out, err := prompt.ExecTmpl(promptInputs)
