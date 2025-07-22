@@ -123,6 +123,28 @@ func (m *HepGen) workspace(
 		Container(), nil
 }
 
+// Preview publishes the generated HEP draft to localhost:3000.
+// To port-forward to the container, use `dagger -c /bin/sh -c 'preview|up'`
+// The markdown server is managed by 'madness' (https://madness.dannyb.co).
+func (m *HepGen) Preview(
+	ctx context.Context,
+	// the KEP title
+	title string,
+	// the source directory to mount into the workspace
+	// +defaultPath="./work"
+	source *dagger.Directory,
+) (*dagger.Service, error) {
+	w, err := m.Hep(ctx, title, source)
+	if err != nil {
+		return nil, err
+	}
+
+	serviceOpts := dagger.ContainerAsServiceOpts{
+		Args: []string{"madness", "server"},
+	}
+	return w.AsService(serviceOpts), nil
+}
+
 // Sandbox returns a sandbox container representing the workspace with a bind mount to the host 'source' directory.
 // The sandbox container is exposed at port 3000.
 // To start an interactive session, use `dagger -c /bin/sh -c 'sandbox|terminal'`
