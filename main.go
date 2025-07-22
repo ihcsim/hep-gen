@@ -32,13 +32,13 @@ const (
 	tmplDownloadURL  = "https://raw.githubusercontent.com/harvester/harvester/refs/heads/master/enhancements/YYYYMMDD-template.md"
 	fileHEP          = "index.md"
 	fileSummary      = "summary.md"
-	workDir          = "work"
+	workdir          = "/docs"
 	exposePort       = 3000
 )
 
 var (
-	filepathHEP     = filepath.Join(workDir, fileHEP)
-	filepathSummary = filepath.Join(workDir, fileSummary)
+	filepathHEP     = filepath.Join(workdir, fileHEP)
+	filepathSummary = filepath.Join(workdir, fileSummary)
 )
 
 // Hep generates a HEP draft with the given title.
@@ -78,6 +78,7 @@ func (m *HepGen) Hep(
 		source,
 		tmplDownloadURL,
 		filepathHEP,
+		workdir,
 		exposePort,
 	)
 	env := dag.Env().
@@ -129,6 +130,7 @@ func (m *HepGen) Sandbox(
 		source,
 		tmplDownloadURL,
 		fileHEP,
+		workdir,
 		exposePort,
 	).
 		Container().

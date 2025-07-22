@@ -33,9 +33,9 @@ You have access to a workspace to do the work. The workspace is uses 'madness' (
 
 The workspace contains a summary file located at '%s' and an index file located at '%s'. Both files are expressed in the markdown language.
 
-The index file contains two sections namely, 'Problem' and 'Solution'. The 'Problem' section describes the problem the HEP is attempting to solve. The 'Solution' section provides a preliminary description of the solution to address the problem. Use this solution as the starting point for the HEP.
+Please read the summary file. It contains two sections namely, 'Problem' and 'Solution'. The 'Problem' section describes the problem the HEP is attempting to solve. The 'Solution' section provides a preliminary description of the solution to address the problem. Use this solution as the starting point for the HEP.
 
-The index file is when the HEP should be written to. Maintain its original sections layout. Fill in all the sections. Sections with the '[optional]' label in their title are optional.`, docSiteKubeVirt, docSiteLonghorn, docSiteHarvester, title, docSiteMadness, filepathSummary, filepathHEP)
+Please write the HEP to the index file is. Fill in all the sections. Sections with the '[optional]' label in their title are optional.`, docSiteKubeVirt, docSiteLonghorn, docSiteHarvester, title, docSiteMadness, filepathSummary, filepathHEP)
 
 		inputs = &PromptInputs{
 			HEPTitle:         title,
