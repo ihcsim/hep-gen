@@ -4,10 +4,10 @@ The `hep-gen` Dagger module is an AI agent that can be used to generate a Harves
 Enhancement Proposal (HEP) draft. The purpose of the tool is to give Harvester
 engineers a head start with HEP authoring by:
 
+* Providing initial content and word suggestions for various sections like user
+stories and test cases
+* Suggesting research topics and additional notes for unfamiliar technologies
 * Ensuring the HEP template layout and formatting are used
-* Providing initial content for the user stories and test cases sections
-* Suggesting research topics and notes for unfamiliar technologies
-* Providing word suggestions
 
 ⚠️ The HEP draft must be reviewed and approved by Harvester maintainers, prior to
 acceptance into the `harvester/harvester` repository.
@@ -35,12 +35,14 @@ The `hep` function is the main function for writing a HEP draft. The title of th
 HEP must be provided as an argument to the function. Use the `./work/summary.md`
 file to provide additional context about the HEP to the LLM. In particular, the
 LLM expects a problem definition and a brief description of the desired solution.
-The generated HEP is written to a file named `index.md`.
+The generated HEP is written to a file named `index.md` in the workspace. It can
+be exported to the `./work` folder using Dagger's built-in `export` function. See
+example below.
 
 The `preview` function is built on top of the `hep` function where it publishes
 the HEP to localhost:3000, for better readability.
 
-For debugging purposes, the `workspace` function can be used to start and
+For debugging purposes, the `sandbox` function can be used to start an
 interactive session with an empty workspace with a bind mount to the `./work`
 folder.
 
@@ -56,6 +58,11 @@ Follow the Dagger
 [LLM endpoint configuration instructions](https://docs.dagger.io/configuration/llm/)
 to configure an LLM for use with Dagger.
 
+Think of a good HEP title to be used as the argument to the `hep` function.
+
+Update the `./work/summary.md` file with information on the problem that HEP is
+attempting to address. Provide a brief description of the proposed solution.
+
 Launch the Dagger shell:
 
 ```sh
@@ -65,7 +72,7 @@ dagger
 Assign the task to create the HEP to a `task` variable:
 
 ```sh
-task=$(hep "Securing in-cluster virtual machines and pods communication with mTLS")
+task=$(hep "<hep-title>")
 ```
 
 Generate the HEP and publish it to localhost:3000:
