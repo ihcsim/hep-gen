@@ -15,10 +15,10 @@ test:
 	go test ./...
 
 hep:
-	dagger -c /bin/sh -c 'hep'
+	dagger -c /bin/sh -c 'hep "test title" | terminal'
 
 preview:
-	dagger -c /bin/sh -c 'preview|up'
+	dagger -c /bin/sh -c 'preview| as-service --args "madness" --args "server" | up'
 
 sandbox:
-	dagger -c /bin/sh -c 'sandbox|up'
+	dagger -c /bin/sh -c 'sandbox| terminal'
