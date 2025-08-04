@@ -89,12 +89,12 @@ func (m *HepGen) Hep(
 	)
 	env := dag.Env().
 		WithHepWorkspaceInput("workspace", ws, "the workspace for this task").
-		WithHepWorkspaceOutput("workspace", "the workspace with the generated HEP draft")
+		WithHepWorkspaceOutput("completed", "the workspace with the generated HEP draft")
 	return dag.LLM().
 		WithEnv(env).
 		WithPrompt(string(prompt)).
 		Env().
-		Output("workspace").
+		Output("completed").
 		AsHepWorkspace().
 		Container(), nil
 }
@@ -147,12 +147,12 @@ func (m *HepGen) Review(
 
 	env := dag.Env().
 		WithDirectoryInput("review", source, "the local directory where the HEP index.md file is").
-		WithDirectoryOutput("review", "the local directory where the review commments are written to")
+		WithDirectoryOutput("completed", "the local directory where the review commments are written to")
 	return dag.LLM().
 		WithEnv(env).
 		WithPrompt(string(prompt)).
 		Env().
-		Output("review").
+		Output("completed").
 		AsDirectory(), nil
 }
 
