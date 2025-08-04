@@ -17,7 +17,8 @@ package main
 import (
 	"context"
 	"dagger/hep-gen/internal/dagger"
-	"dagger/hep-gen/pkg/prompt"
+	prompthep "dagger/hep-gen/pkg/prompt/hep"
+	promptreview "dagger/hep-gen/pkg/prompt/review"
 	"io"
 	"path/filepath"
 )
@@ -25,20 +26,25 @@ import (
 type HepGen struct{}
 
 const (
+	bindWorkdir      = "/docs"
+	hostWorkDir      = "./work"
 	docSiteHarvester = "https://docs.harvesterhci.io/v1.5/"
 	docSiteKubeVirt  = "https://kubevirt.io/user-guide/"
 	docSiteLonghorn  = "https://longhorn.io/docs/1.9.0/"
 	docSiteMadness   = "https://madness.dannyb.co/"
-	tmplDownloadURL  = "https://raw.githubusercontent.com/harvester/harvester/refs/heads/master/enhancements/YYYYMMDD-template.md"
+	exposePort       = 3000
 	fileHEP          = "index.md"
 	fileSummary      = "summary.md"
-	workdir          = "/docs"
-	exposePort       = 3000
+	fileReview       = "review.md"
+	tmplDownloadURL  = "https://raw.githubusercontent.com/harvester/harvester/refs/heads/master/enhancements/YYYYMMDD-template.md"
 )
 
 var (
-	filepathHEP     = filepath.Join(workdir, fileHEP)
-	filepathSummary = filepath.Join(workdir, fileSummary)
+	bindFilepathHEP     = filepath.Join(bindWorkdir, fileHEP)
+	bindFilepathSummary = filepath.Join(bindWorkdir, fileSummary)
+
+	hostFilepathHEP    = filepath.Join(hostWorkDir, fileHEP)
+	hostFilepathReview = filepath.Join(hostWorkDir, fileReview)
 )
 
 // Hep generates a HEP draft with the given title.
@@ -49,23 +55,23 @@ var (
 // * index.md - the final draft of the HEP following the sections outlined in template.md
 func (m *HepGen) Hep(
 	ctx context.Context,
-	// the KEP title
+	// the HEP title
 	title string,
 	// the source directory to mount into the workspace
 	// +defaultPath="./work"
 	source *dagger.Directory,
 ) (*dagger.Container, error) {
-	promptInputs := &prompt.PromptInputs{
+	promptInputs := &prompthep.PromptInputs{
 		HEPTitle:         title,
 		DocSiteHarvester: docSiteHarvester,
 		DocSiteKubeVirt:  docSiteKubeVirt,
 		DocSiteLonghorn:  docSiteLonghorn,
 		DocSiteMadness:   docSiteMadness,
-		FilepathHEP:      filepathHEP,
-		FilepathSummary:  filepathSummary,
+		FilepathHEP:      bindFilepathHEP,
+		FilepathSummary:  bindFilepathSummary,
 	}
 
-	out, err := prompt.ExecTmpl(promptInputs)
+	out, err := prompthep.ExecTmpl(promptInputs)
 	if err != nil {
 		return nil, err
 	}
@@ -77,8 +83,8 @@ func (m *HepGen) Hep(
 	ws := dag.HepWorkspace(
 		source,
 		tmplDownloadURL,
-		filepathHEP,
-		workdir,
+		bindFilepathHEP,
+		bindWorkdir,
 		exposePort,
 	)
 	env := dag.Env().
@@ -93,7 +99,7 @@ func (m *HepGen) Hep(
 		Container(), nil
 }
 
-// Preview publishes the generated HEP draft to localhost:3000.
+// Prleview publishes the generated HEP draft to localhost:3000.
 // To port-forward to the container, use `dagger -c /bin/sh -c 'preview|up'`
 // The markdown server is managed by 'madness' (https://madness.dannyb.co).
 func (m *HepGen) Preview(
@@ -115,6 +121,41 @@ func (m *HepGen) Preview(
 	return w.AsService(serviceOpts), nil
 }
 
+// Review reviews the content of the HEP found in the local `./work/index.md` file.
+func (m *HepGen) Review(
+	ctx context.Context,
+	// the local directory where the HEP index.md is
+	// +defaultPath="./work"
+	source *dagger.Directory) (
+	*dagger.Directory, error,
+) {
+	promptInputs := &promptreview.PromptInputs{
+		DocSiteHarvester: docSiteHarvester,
+		DocSiteKubeVirt:  docSiteKubeVirt,
+		DocSiteLonghorn:  docSiteLonghorn,
+		FilepathHEP:      hostFilepathHEP,
+		FilepathReview:   hostFilepathReview,
+	}
+	out, err := promptreview.ExecTmpl(promptInputs)
+	if err != nil {
+		return nil, err
+	}
+	prompt, err := io.ReadAll(out)
+	if err != nil {
+		return nil, err
+	}
+
+	env := dag.Env().
+		WithDirectoryInput("review", source, "the local directory where the HEP index.md file is").
+		WithDirectoryOutput("review", "the local directory where the review commments are written to")
+	return dag.LLM().
+		WithEnv(env).
+		WithPrompt(string(prompt)).
+		Env().
+		Output("review").
+		AsDirectory(), nil
+}
+
 // Sandbox returns a sandbox container representing the workspace with a bind mount to the host 'source' directory.
 // The sandbox container is exposed at port 3000.
 // To start an interactive session, use `dagger -c /bin/sh -c 'sandbox|terminal'`
@@ -130,7 +171,7 @@ func (m *HepGen) Sandbox(
 		source,
 		tmplDownloadURL,
 		fileHEP,
-		workdir,
+		bindWorkdir,
 		exposePort,
 	).
 		Container().

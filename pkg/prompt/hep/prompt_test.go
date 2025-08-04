@@ -1,4 +1,4 @@
-package prompt
+package hep
 
 import (
 	"fmt"
@@ -29,13 +29,13 @@ The enhancement can propose either new features or improvements to existing feat
 
 Please use appropriate formatting such as headers, tables, bullet points and embedded .PNG images to improve readability. Including Golang and YAML code samples to illustrate certain changes is encouraged, but not necessary. Make sure that the generated HEP contains only valid markdown syntax.
 
-You have access to a workspace to do the work. The workspace is uses 'madness' (%s), an instant markdown server, to render the markdown documents.
+You have access to a workspace to do the work. The workspace uses 'madness' (%s), an instant markdown server, to render the markdown documents.
 
 The workspace contains a summary file located at '%s' and an index file located at '%s'. Both files are expressed in the markdown language.
 
-Please read the summary file. It contains two sections namely, 'Problem' and 'Solution'. The 'Problem' section describes the problem the HEP is attempting to solve. The 'Solution' section provides a preliminary description of the solution to address the problem. Use this solution as the starting point for the HEP.
+Read the summary file. It contains two sections namely, 'Problem' and 'Solution'. The 'Problem' section describes the problem the HEP is attempting to solve. The 'Solution' section provides a preliminary description of the solution to address the problem. Use this solution as the starting point for the HEP.
 
-Please write the HEP to the index file is. Fill in all the sections. Sections with the '[optional]' label in their title are optional.`, docSiteKubeVirt, docSiteLonghorn, docSiteHarvester, title, docSiteMadness, filepathSummary, filepathHEP)
+Write the HEP to the %s file. Fill in all the sections. Sections with the '[optional]' label in their title are optional.`, docSiteKubeVirt, docSiteLonghorn, docSiteHarvester, title, docSiteMadness, filepathSummary, filepathHEP, filepathHEP)
 
 		inputs = &PromptInputs{
 			HEPTitle:         title,

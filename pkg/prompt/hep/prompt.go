@@ -1,4 +1,5 @@
-package prompt
+// Package hep contains the LLM prompt for the Hep function
+package hep
 
 import (
 	"bytes"
@@ -28,16 +29,16 @@ The enhancement can propose either new features or improvements to existing feat
 
 Please use appropriate formatting such as headers, tables, bullet points and embedded .PNG images to improve readability. Including Golang and YAML code samples to illustrate certain changes is encouraged, but not necessary. Make sure that the generated HEP contains only valid markdown syntax.
 
-You have access to a workspace to do the work. The workspace is uses 'madness' ({{ .DocSiteMadness }}), an instant markdown server, to render the markdown documents.
+You have access to a workspace to do the work. The workspace uses 'madness' ({{ .DocSiteMadness }}), an instant markdown server, to render the markdown documents.
 
 The workspace contains a summary file located at '{{ .FilepathSummary }}' and an index file located at '{{ .FilepathHEP }}'. Both files are expressed in the markdown language.
 
-Please read the summary file. It contains two sections namely, 'Problem' and 'Solution'. The 'Problem' section describes the problem the HEP is attempting to solve. The 'Solution' section provides a preliminary description of the solution to address the problem. Use this solution as the starting point for the HEP.
+Read the summary file. It contains two sections namely, 'Problem' and 'Solution'. The 'Problem' section describes the problem the HEP is attempting to solve. The 'Solution' section provides a preliminary description of the solution to address the problem. Use this solution as the starting point for the HEP.
 
-Please write the HEP to the index file is. Fill in all the sections. Sections with the '[optional]' label in their title are optional.`
+Write the HEP to the {{ .FilepathHEP }} file. Fill in all the sections. Sections with the '[optional]' label in their title are optional.`
 
 func ExecTmpl(inputs *PromptInputs) (io.Reader, error) {
-	tmpl, err := template.New("prompt").Parse(prompt)
+	tmpl, err := template.New("prompt-hep").Parse(prompt)
 	if err != nil {
 		return nil, err
 	}

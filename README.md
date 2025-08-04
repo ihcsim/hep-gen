@@ -25,6 +25,7 @@ $ dagger functions
 Name      Description
 hep       Hep generates a HEP draft with the given title. The generated content is output to stdout.
 preview   Preview publishes the generated HEP draft to localhost:3000.
+review    Review reviews the content of the HEP found in the local `./work/index.md` file.
 sandbox   Sandbox returns a sandbox container representing the workspace with a bind mount to the host 'source' directory.
 ```
 
@@ -95,6 +96,13 @@ To export the generated `index.md` HEP file to the local `./work` directory:
 
 ```sh
 $task | directory . | export ./work
+```
+
+To get the LLM to review the exported `index.md` HEP file and write its
+feedback to the `work/review.md`:
+
+```sh
+review | export ./work
 ```
 
 Once the `index.md` file is exported, a new interactive workspace can be started
