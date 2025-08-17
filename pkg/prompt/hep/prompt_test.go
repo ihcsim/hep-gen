@@ -3,7 +3,6 @@ package hep
 import (
 	"fmt"
 	"io"
-	"path/filepath"
 	"reflect"
 	"testing"
 )
@@ -15,8 +14,8 @@ func TestPromptTmpl(t *testing.T) {
 		docSiteKubeVirt  = "https://kubevirt.io/user-guide/"
 		docSiteLonghorn  = "https://longhorn.io/docs/1.9.0/"
 		docSiteMadness   = "https://madness.dannyb.co/"
-		filepathHEP      = filepath.Join("work", "index.md")
-		filepathSummary  = filepath.Join("work", "summary.md")
+		filepathHEP      = "enhancements/index.md"
+		filepathSummary  = "summary.md"
 
 		expected = fmt.Sprintf(`Harvester is a modern, open, interoperable, hyperconverged infrastructure (HCI) solution built on Kubernetes. It is an open source project maintained by SUSE.
 Harvester depends on KubeVirt (%s) to run virtual machines in Kubernetes. Longhorn (%s) serves as its main storage provider using the Container Storage Interface (CSI) API. More information on Harvester can be found at %s.

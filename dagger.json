@@ -6,6 +6,11 @@
   },
   "dependencies": [
     {
+      "name": "feature-branch",
+      "source": "github.com/kpenfound/dag/feature-branch@273ca2c743001ca8b8f8468059469d63888cb9fd",
+      "pin": "273ca2c743001ca8b8f8468059469d63888cb9fd"
+    },
+    {
       "name": "hep-workspace",
       "source": ".dagger/hep-workspace"
     }

@@ -112,6 +112,12 @@ using the `sandbox` function with the `./work` folder remounted:
 sandbox | terminal
 ```
 
+To submit a pull request containing the HEP to the Harvester repository:
+
+```sh
+pull-request https://github.com/<fork-org>/harvester.git <github-issue-number> <gh_token>
+```
+
 ## Development
 
 To build and test the module and its dependencies:

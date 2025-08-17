@@ -4,5 +4,7 @@
 /internal/telemetry
 /.env
 hep-gen
+work
 work/index.md
 work/review.md
+.env

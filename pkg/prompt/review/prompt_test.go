@@ -3,7 +3,6 @@ package review
 import (
 	"fmt"
 	"io"
-	"path/filepath"
 	"reflect"
 	"testing"
 )
@@ -13,8 +12,8 @@ func TestPromptTmpl(t *testing.T) {
 		docSiteHarvester = "https://docs.harvesterhci.io/v1.5/"
 		docSiteKubeVirt  = "https://kubevirt.io/user-guide/"
 		docSiteLonghorn  = "https://longhorn.io/docs/1.9.0/"
-		filepathHEP      = filepath.Join("work", "index.md")
-		filepathReview   = filepath.Join("work", "review.md")
+		filepathHEP      = "index.md"
+		filepathReview   = "review.md"
 
 		expected = fmt.Sprintf(`Harvester is a modern, open, interoperable, hyperconverged infrastructure (HCI) solution built on Kubernetes. It is an open source project maintained by SUSE.
 
