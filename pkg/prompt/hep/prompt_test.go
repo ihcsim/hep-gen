@@ -14,7 +14,7 @@ func TestPromptTmpl(t *testing.T) {
 		docSiteKubeVirt  = "https://kubevirt.io/user-guide/"
 		docSiteLonghorn  = "https://longhorn.io/docs/1.9.0/"
 		docSiteMadness   = "https://madness.dannyb.co/"
-		filepathHEP      = "enhancements/index.md"
+		filepathHEP      = "index.md"
 		filepathSummary  = "summary.md"
 
 		expected = fmt.Sprintf(`Harvester is a modern, open, interoperable, hyperconverged infrastructure (HCI) solution built on Kubernetes. It is an open source project maintained by SUSE.
