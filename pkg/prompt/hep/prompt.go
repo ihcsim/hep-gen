@@ -15,27 +15,44 @@ type PromptInputs struct {
 	DocSiteMadness   string
 	FilepathHEP      string
 	FilepathSummary  string
+	FilepathTemplate string
 	WordLimit        int
 }
 
 const prompt = `Harvester is a modern, open, interoperable, hyperconverged infrastructure (HCI) solution built on Kubernetes. It is an open source project maintained by SUSE.
 Harvester depends on KubeVirt ({{ .DocSiteKubeVirt }}) to run virtual machines in Kubernetes. Longhorn ({{ .DocSiteLonghorn }}) serves as its main storage provider using the Container Storage Interface (CSI) API. More information on Harvester can be found at {{ .DocSiteHarvester }}.
 
-You are a software engineer tasked with the responsbility to write a new Harvester Enhancement Proposal (HEP). A HEP is a proposal documentation that describes new technical enhancement to address specific user problems. It is expressed in the markdown language.
+## Goals
 
-The title of your HEP is going to be "{{ .HEPTitle }}".
+You are a software engineer tasked with the responsbility to write a new Harvester Enhancement Proposal (HEP).
+
+## What is a HEP?
+
+A HEP is a proposal documentation that describes new technical enhancement to address specific user problems. It is expressed in the markdown language.
 
 The enhancement can propose either new features or improvements to existing features. The readers of this HEP are software engineers familiar with technologies like Kubernetes, Golang, Python, YAML etc.
 
+The title of your HEP is going to be "{{ .HEPTitle }}".
+
+## Steps
+
+You have access to a workspace to do the work.
+
+The workspace contains a summary file located at '{{ .FilepathSummary }}' and template file located at '{{ .FilepathTemplate }}'. Both files are expressed in the markdown language.
+
+Read the summary file. It contains at least two main sections named 'Problem' and 'Solution'. The 'Problem' section describes the problem the HEP is attempting to solve. The 'Solution' section provides a preliminary description of the solution to address the problem. Use this solution as the starting point for the HEP.
+
+To generate the HEP draft, use the template file as a guide. The template file contains the sections that should be included in the HEP draft. Sections with the '[optional]' label in their title are optional. Otherwise, try to include all the sections in the HEP draft.
+
 Please use appropriate formatting such as headers, tables, bullet points and embedded .PNG images to improve readability. Including Golang and YAML code samples to illustrate certain changes is encouraged, but not necessary. Make sure that the generated HEP contains only valid markdown syntax.
 
-You have access to a workspace to do the work. The workspace uses 'madness' ({{ .DocSiteMadness }}), an instant markdown server, to render the markdown documents.
+Write the HEP draft to the {{ .FilepathHEP }} file.
 
-The workspace contains a summary file located at '{{ .FilepathSummary }}' and an index file located at '{{ .FilepathHEP }}'. Both files are expressed in the markdown language.
+The workspace also provides 'madness' ({{ .DocSiteMadness }}), an instant markdown server, to render the markdown documents.
 
-Read the summary file. It contains two sections namely, 'Problem' and 'Solution'. The 'Problem' section describes the problem the HEP is attempting to solve. The 'Solution' section provides a preliminary description of the solution to address the problem. Use this solution as the starting point for the HEP.
+## Validation
 
-Write the HEP to the {{ .FilepathHEP }} file. Fill in all the sections. Sections with the '[optional]' label in their title are optional.`
+Make sure the generated HEP draft is a markdown documents with valid syntax.`
 
 func ExecTmpl(inputs *PromptInputs) (io.Reader, error) {
 	tmpl, err := template.New("prompt-hep").Parse(prompt)

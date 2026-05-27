@@ -16,13 +16,14 @@ package main
 
 import (
 	"context"
-	"dagger/hep-gen/internal/dagger"
-	prompthep "dagger/hep-gen/pkg/prompt/hep"
-	promptreview "dagger/hep-gen/pkg/prompt/review"
 	"fmt"
 	"io"
 	"strings"
 	"time"
+
+	"dagger/hep-gen/internal/dagger"
+	prompthep "dagger/hep-gen/pkg/prompt/hep"
+	promptreview "dagger/hep-gen/pkg/prompt/review"
 
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -40,6 +41,7 @@ const (
 	exposePort       = 3000
 	fileHEP          = "index.md"
 	fileSummary      = "summary.md"
+	fileTemplate     = "template.md"
 	fileReview       = "review.md"
 	tmplDownloadURL  = "https://raw.githubusercontent.com/harvester/harvester/refs/heads/master/enhancements/YYYYMMDD-template.md"
 )
@@ -68,6 +70,7 @@ func (m *HepGen) Hep(
 		DocSiteMadness:   docSiteMadness,
 		FilepathHEP:      fileHEP,
 		FilepathSummary:  fileSummary,
+		FilepathTemplate: fileTemplate,
 	}
 
 	out, err := prompthep.ExecTmpl(promptInputs)
